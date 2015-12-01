@@ -1,0 +1,28 @@
+{
+  "name": "excess-image-upload",
+  "version": "0.0.1",
+  "description": "Image upload utilites for Polymer",
+  "homepage": "https://atotic.github.io/excess-image-upload",
+  "main": "image-upload.html",
+  "authors": [
+    "Aleks Totic <a@totic.org>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "/.*",
+    "/test/",
+    "/demo/"
+  ],
+  "keywords": [
+    "web-components",
+    "polymer"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0"
+  },
+  "devDependencies": {
+    "web-component-tester": "*",
+    "test-fixture": "PolymerElements/test-fixture#^1.0.0",
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0"
+  }
+}

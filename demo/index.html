@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+  <title>image upload demo</title>
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <link rel="import" href="../excess-image-upload.html">
+</head>
+<body>
+  <demo-element></demo-element>
+
+  <dom-module id="demo-element">
+    <template>
+      <p><pre>image-upload-fileinput</pre></p>
+      <image-upload-fileinput files="{{files}}" show-input></image-upload-fileinput>
+      <p><pre>image-upload-fileinput with content</pre></p>
+      <image-upload-fileinput files="{{files}}" single>
+        <div style="color: blue; font-size: larger">Click me to add files</div>
+      </image-upload-fileinput>
+    </template>
+  </dom-module>
+
+  <script>
+    document.addEventListener('WebComponentsReady', function() {
+      Polymer({
+        is: 'demo-element',
+        properties: {
+          files: {
+            observer: 'filesChanged'
+          }
+        },
+
+        filesChanged: function(files) {
+          console.log('files changed', files.length);
+        },
+
+
+      });
+    });
+  </script>
+
+</body>
+</html>

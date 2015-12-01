@@ -1,0 +1,91 @@
+<link rel="import" href="../polymer/polymer.html">
+<dom-module id="image-upload-fileinput">
+  <template>
+    <style>
+      :host {
+        display: block;
+        cursor: pointer;
+      }
+
+      input {
+        display: none;
+      }
+
+      :host[show-input] > input {
+        display: block;
+      }
+
+
+    </style>
+    <content></content>
+    <input id="filepicker" type="file" multiple="{{!single}}" accept="image/*" capture="filesystem"
+      on-change="handleChange">
+  </template>
+  <script>
+  'use strict';
+
+/**
+ * Wrapper for `<input type=file>`
+ * By default, does not show content, you have to provide it.
+
+     <image-upload-fileinput>Click here to upload</image-upload-fileinput>
+
+ * If you'd like to show standard filepicker, use showInput attribute
+
+ @demo
+ */
+    Polymer({
+
+      is: 'image-upload-fileinput',
+
+      properties: {
+        /**
+         * Single file only if true
+         */
+        single: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
+         * Show file input field if true
+         */
+        showInput: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+
+        /**
+         * Picked files
+         */
+        files: {
+          type: Array,
+          value: function() { return []; },
+          notify: true
+        },
+
+      },
+
+      listeners: {
+        tap: 'handleTap'
+      },
+
+      handleChange: function(ev) {
+        var files = [];
+        var filelist = this.$.filepicker.files;
+        if (filelist) {
+          for (var i=0; i<filelist.length; i++)
+            files.push(filelist[i]);
+        }
+        this.files = files;
+      },
+
+      handleTap: function(ev) {
+        if (ev.target != this.$.filepicker)
+          this.$.filepicker.click();
+      }
+
+    });
+  </script>
+</dom-module>
