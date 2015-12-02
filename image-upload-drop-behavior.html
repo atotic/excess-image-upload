@@ -1,0 +1,108 @@
+<script>
+(function() {
+'use strict';
+
+  /**
+
+  @polymerBehavior
+  */
+  var FileDropBehavior = {
+
+    properties: {
+      /**
+       * dragActive is true when user is dragging the files over
+       * it is reflected to attributes, and you can use  this for css styling
+       */
+      dragActive: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
+      },
+
+      /**
+       * files that have been dropped
+       */
+      dropFiles: {
+        type: Array,
+        value: function() { return [] },
+        notify: true
+      }
+    },
+
+    attached: function() {
+      this.listen(this, 'dragenter', '_handleDragEnter');
+      this.listen(this, 'dragleave', '_handleDragLeave');
+      this.listen(this, 'dragover', '_handleDragOver');
+      this.listen(this, 'drop', '_handleDrop');
+    },
+
+    detached: function() {
+      this.unlisten(this, 'dragenter', '_handleDragEnter');
+      this.unlisten(this, 'dragleave', '_handleDragLeave');
+      this.unlisten(this, 'dragover', '_handleDragOver');
+      this.unlisten(this, 'drop', '_handleDrop');
+    },
+
+    _getFilesFromDragEvent: function(ev) {
+      var dataTransfer = ev.dataTransfer;
+      if (dataTransfer.files && dataTransfer.files.length > 0) {
+        // console.log('got files');
+        return dataTransfer.files;
+      }
+      else if (dataTransfer.types) {
+        // console.log('got file type');
+        if ('contains' in dataTransfer.types) // Firefox
+          return dataTransfer.types.contains("Files");
+        else // Chrome
+          return dataTransfer.types.indexOf("Files") != -1;
+      }
+      return null;
+    },
+
+    _handleDragEnter: function(ev) {
+      console.log('dragEnter');
+      if (this._getFilesFromDragEvent(ev)) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        this.dragActive = true;
+      }
+    },
+
+    _handleDragOver: function(ev) {
+      if (this._getFilesFromDragEvent(ev)) {
+        this.dragActive = true;
+        ev.preventDefault();
+        ev.stopPropagation();
+      }
+    },
+
+    _handleDragLeave: function(ev) {
+      console.log('dragLeave');
+      this.dragActive = false;
+      ev.stopPropagation();
+      ev.preventDefault();
+    },
+
+    _handleDrop: function(ev) {
+      console.log('drop');
+      var files = this._getFilesFromDragEvent(ev);
+      var fileArray = [];
+      for (var i=0; files && i<files.length; i++) {
+        fileArray.push(files[i]);
+      }
+      this.dropFiles = fileArray;
+      ev.preventDefault();
+      ev.stopPropagation();
+      this.dragActive = false;
+    },
+
+  }
+
+  if (!window.ExcessImageUpload)
+    window.ExcessImageUpload = {};
+
+  window.ExcessImageUpload.FileDropBehavior = FileDropBehavior;
+
+
+})();
+</script>

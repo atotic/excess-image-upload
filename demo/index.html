@@ -7,12 +7,31 @@
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
   <link rel="import" href="../excess-image-upload.html">
+  <style>
+    body {
+      min-height:100vh;
+      margin: 0;
+    }
+  </style>
 </head>
-<body>
+<body fullbleed>
   <demo-element></demo-element>
 
   <dom-module id="demo-element">
     <template>
+      <style>
+        :host {
+          display:block;
+          height: 100vh;
+          border: 1px solid white;
+          padding: 16px;
+          box-sizing: border-box;
+        }
+        :host[drag-active] {
+          background-color: #F6F6CC;
+          border: 1px solid yellow;
+        }
+      </style>
       <p><pre>image-upload-fileinput</pre></p>
       <image-upload-fileinput files="{{files}}" show-input></image-upload-fileinput>
       <p><pre>image-upload-fileinput with content</pre></p>
@@ -25,7 +44,13 @@
   <script>
     document.addEventListener('WebComponentsReady', function() {
       Polymer({
+
         is: 'demo-element',
+
+        behaviors: [
+          ExcessImageUpload.FileDropBehavior
+        ],
+
         properties: {
           files: {
             observer: 'filesChanged'
