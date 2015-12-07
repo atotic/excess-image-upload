@@ -36,7 +36,7 @@
 
     _processWorkerMessage: function(ev) {
       switch(ev.data.action) {
-        case 'parsed':
+        case 'metadata':
           this._completeCallback(ev.data.token, ev.data.file, ev.data.metadata);
           break;
         default:
