@@ -1,0 +1,44 @@
+<link rel="import" href="image-upload-metadata.html">
+
+<script src="../exif-js/exif.js">
+
+<dom-module id="image-upload-icon">
+  <template>
+    <style>
+      :host {
+      }
+    </style>
+    <image-upload-metadata file="{{file}}" metadata="{{metadata}}"></image-upload-metadata>
+    <img src="{{imageUrl}}">
+  </template>
+</dom-module>
+<script>
+/**
+ * Displays image, decodes metadata
+ */
+  Polymer({
+
+    is: 'image-upload-icon',
+
+    properties: {
+      /**
+       * File to display
+       */
+      file: {
+        type: Object,
+        observer: 'fileChanged'
+      },
+
+      metadata: {
+        type: Object,
+        notify: true
+      },
+
+    },
+
+    fileChanged: function(file) {
+      console.log("file changed");
+    },
+  });
+</script>
+

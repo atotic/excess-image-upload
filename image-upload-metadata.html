@@ -1,0 +1,121 @@
+
+<dom-module id="image-upload-metadata">
+  <template>
+    <style> :host { display: none } </style>
+  </template>
+</dom-module>
+<script>
+(function() {
+'use strict';
+
+  function randomString (len, charSet) {
+    charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var randomString = '';
+    for (var i = 0; i < len; i++) {
+        var randomPoz = Math.floor(Math.random() * charSet.length);
+        randomString += charSet.substring(randomPoz,randomPoz+1);
+    }
+    return randomString;
+  };
+
+  /**
+   * Exif Worker thread api
+   */
+  var ExifWorker = {
+    _worker: null,
+
+    _getWorker: function() {
+      if (!this._worker) {
+        this._worker = new Worker('/components/excess-image-upload/image-upload-exif-worker.js');
+        this._worker.addEventListener('message', this._processWorkerMessage.bind(this));
+      }
+      return this._worker;
+    },
+
+    _callbacks: {}, // Map: randomString -> callback
+
+    _processWorkerMessage: function(ev) {
+      switch(ev.data.action) {
+        case 'parsed':
+          this._completeCallback(ev.data.token, ev.data.file, ev.data.metadata);
+          break;
+        default:
+          console.warn('unknown message', ev.data);
+      }
+    },
+
+    _registerCallback: function(callback) {
+      var id = randomString(6);
+      this._callbacks[id] = callback;
+      return id;
+    },
+
+    _completeCallback: function(id, file, metadata) {
+      if (!(id in this._callbacks)) {
+        console.error('bad callback');
+        return;
+      }
+      this._callbacks[id](file, metadata);
+      delete this._callbacks[id];
+    },
+
+    processFile: function(file, callback) {
+      this._getWorker().postMessage({
+          action: 'parse',
+          file: file,
+          token: this._registerCallback(callback)
+        }
+      );
+    }
+  }
+
+  /**
+   * Exposes
+   */
+  Polymer({
+
+    is: 'image-upload-metadata',
+
+    properties: {
+      file: {
+        type: Object,
+        observer: 'fileChanged'
+      },
+
+      /**
+       * Metadata extracted from file
+       */
+      metadata: {
+        type: Object,
+        readOnly: true,
+        notify: true
+      }
+    },
+
+    fileChanged: function(file) {
+      if (file) {
+        // EXIF.getData(file, function() {
+
+        // });
+        ExifWorker.processFile(file, function(file, metadata) {
+          if (this.file.name === file.name) {
+            metadata.file = {
+              name: file.name,
+              size: file.size,
+              type: file.type,
+              lastModifiedDate: file.lastModifiedDate
+            }
+            this._setMetadata(metadata);
+          }
+          else {
+            debugger;
+            console.warn('parsed a file for no reason');
+          }
+        }.bind(this));
+      }
+    },
+
+  });
+
+})();
+</script>

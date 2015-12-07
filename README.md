@@ -15,3 +15,9 @@ image upload consists of 3 steps:
 3) upload file
    - ajax calls over the network
 
+
+# TODO
+- exif-js instead of home-made parser
+- parse latitude/longitude
+
+

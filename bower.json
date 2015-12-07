@@ -18,7 +18,8 @@
     "polymer"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.0.0"
+    "polymer": "Polymer/polymer#^1.0.0",
+    "exif-js": "atotic/exif-js#xmlAndThumb"
   },
   "devDependencies": {
     "web-component-tester": "*",
