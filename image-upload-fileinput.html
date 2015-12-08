@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+
 <dom-module id="image-upload-fileinput">
   <template>
     <style>
@@ -19,7 +20,7 @@
     </style>
     <content></content>
     <input id="filepicker" type="file" multiple="{{!single}}" accept="image/*" capture="filesystem"
-      on-change="handleChange">
+      on-change="_handleChange">
   </template>
   <script>
   'use strict';
@@ -68,10 +69,10 @@
       },
 
       listeners: {
-        tap: 'handleTap'
+        tap: '_handleTap'
       },
 
-      handleChange: function(ev) {
+      _handleChange: function(ev) {
         var files = [];
         var filelist = this.$.filepicker.files;
         if (filelist) {
@@ -81,7 +82,7 @@
         this.files = files;
       },
 
-      handleTap: function(ev) {
+      _handleTap: function(ev) {
         if (ev.target != this.$.filepicker)
           this.$.filepicker.click();
       }

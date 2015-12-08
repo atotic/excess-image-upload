@@ -12,12 +12,15 @@
       min-height:100vh;
       margin: 0;
     }
+    p {
+      margin: 0;
+    }
   </style>
 </head>
 <body fullbleed>
+  <pre>You can drop files onto the demo element, or use the file pickers</pre>
   <demo-element></demo-element>
-  <hr>
-  <h1>Files preview</h1>
+
 
 
   <dom-module id="demo-element">
@@ -40,6 +43,8 @@
       <image-upload-fileinput files="{{files}}" single>
         <div style="color: orange; font-size: larger">Gimme that picture!</div>
       </image-upload-fileinput>
+      <hr>
+      <h1>Files preview</h1>
       <template is="dom-repeat" items="{{files}}">
         <demo-image-info file="{{item}}"></demo-image-info>
       </template>
@@ -48,10 +53,22 @@
 
   <dom-module id="demo-image-info">
     <template>
-      <image-upload-metadata file="[[file]]" metadata="{{metadata}}"></image-upload-metadata>
+      <style>
+        :host {
+          display: inline-block;
+        }
+        image-upload-icon {
+          border: 1px solid black;
+          background-color: orange;
+          width: 200px;
+          height: 200px;
+        }
+      </style>
+      <image-upload-icon file="[[file]]" metadata="{{metadata}}"></image-upload-icon>
       <p>title:<span>{{metadata.file.name}}</span></p>
       <p>dateTime:<span>{{metadata.exif.DateTime}}</span></p>
       <p>thumbnail:<span>{{metadata.exif.thumbnail}}</span></p>
+      <p>orientation:{{metadata.exif.Orientation}}</p>
     </template>
   </dom-module>
 
@@ -69,13 +86,18 @@
         properties: {
           files: {
             observer: 'filesChanged'
+          },
+          dropFiles: {
+            observer: 'dropFilesChanged'
           }
         },
 
         filesChanged: function(files) {
-          console.log('files changed', files.length);
+          // console.log('files changed', files.length);
         },
-
+        dropFilesChanged: function(drops) {
+          this.files = drops;
+        }
 
       });
 

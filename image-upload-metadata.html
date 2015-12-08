@@ -70,20 +70,24 @@
   }
 
   /**
-   * Exposes
+   * Reads file's metadata on a worker thread
    */
   Polymer({
 
     is: 'image-upload-metadata',
 
     properties: {
+      /**
+       * File to read
+       */
       file: {
         type: Object,
-        observer: 'fileChanged'
+        observer: '_fileChanged'
       },
 
       /**
        * Metadata extracted from file
+       * @type {Object} -- { exif: {thumbnail: }, iptc: {}, xmp: {}, file: {} }
        */
       metadata: {
         type: Object,
@@ -92,7 +96,7 @@
       }
     },
 
-    fileChanged: function(file) {
+    _fileChanged: function(file) {
       if (file) {
         // EXIF.getData(file, function() {
 
@@ -108,12 +112,44 @@
             this._setMetadata(metadata);
           }
           else {
-            debugger;
             console.warn('parsed a file for no reason');
           }
         }.bind(this));
       }
     },
+
+    /**
+     * Reads thumbnail as data: url
+     * Has to be async because blob must be read asynchronously
+     */
+    getThumbnailUrl: function(metadata, callback) {
+      if (!('exif' in metadata))
+        return callback();
+
+      var rawdata = metadata.exif.thumbnail;
+
+        // Thumbnail extraction http://code.flickr.com/blog/2012/06/01/parsing-exif-client-side-using-javascript-2/
+      if (rawdata.Compression == 6 && rawdata.JpegIFOffset && rawdata.JpegIFByteCount) {
+        var reader = new FileReader();
+        reader.addEventListener('loadend', function() {
+          var data = new Uint8Array(reader.result);
+          var hexData = [];
+          for( var i=0; i<data.length; i++) {
+            var val = data[i];
+            if (val < 16)
+              hexData[i] = "0"+val.toString(16);
+            else
+              hexData[i] = val.toString(16);
+          }
+          var url = "data:image/jpeg,%" + hexData.join('%');
+          callback(url);
+        });
+        reader.readAsArrayBuffer(rawdata.blob);
+      }
+      else {
+        return callback();
+      }
+    }
 
   });
 

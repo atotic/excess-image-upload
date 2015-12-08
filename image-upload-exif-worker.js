@@ -49,7 +49,8 @@ onmessage = function (ev) {
             xmp: ev.data.file.xmpdata
           },
           token: this.token,
-          file: this.file });
+          file: this.file
+        });
       }.bind({file: ev.data.file, token: ev.data.token}));
     break;
 

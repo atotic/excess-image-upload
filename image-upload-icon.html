@@ -1,20 +1,41 @@
 <link rel="import" href="image-upload-metadata.html">
 
-<script src="../exif-js/exif.js">
-
 <dom-module id="image-upload-icon">
   <template>
     <style>
       :host {
+        display: inline-block;
+        width: 100px;
+        height: 100px;
+      }
+      img[data-orientation="3"] {
+        transform: rotate(180deg);
+      }
+      img[data-orientation="6"] {
+        transform: rotate(90deg);
+      }
+      img[data-orientation="8"] {
+        transform: rotate(270deg);
+      }
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        @apply(--image-upload-icon);
       }
     </style>
-    <image-upload-metadata file="{{file}}" metadata="{{metadata}}"></image-upload-metadata>
-    <img src="{{imageUrl}}">
+    <image-upload-metadata id="meta" file="{{file}}" metadata="{{metadata}}"></image-upload-metadata>
+    <img id="img" src$="{{imageUrl}}" on-load="_handleImageLoad" on-error="_handleImageError">
   </template>
 </dom-module>
 <script>
 /**
  * Displays image, decodes metadata
+ * Image will be cropped using object-fit which does not work in IE
+ *
+ * CSS: --image-upload-icon to customize img appearance
+ *
+ * You must set width & height on the element
  */
   Polymer({
 
@@ -26,19 +47,59 @@
        */
       file: {
         type: Object,
-        observer: 'fileChanged'
+        observer: '_fileChanged'
       },
 
+      /**
+       * File's metadata
+       */
       metadata: {
         type: Object,
+        observer: '_metadataChanged',
         notify: true
       },
 
     },
 
-    fileChanged: function(file) {
-      console.log("file changed");
+    detached: function() {
+      if (this.objectUrl)
+        URL.revokeObjectURL(this.objectUrl);
+      this.objectUrl = undefined;
     },
+
+    _fileChanged: function(file) {
+      // console.log("file changed");
+    },
+
+    _createObjectURL: function(file) {
+      if (this.objectUrl)
+        URL.revokeObjectURL(this.objectUrl);
+      this.objectUrl = URL.createObjectURL(file);
+      return this.objectUrl;
+    },
+
+    _handleImageLoad: function(ev) {
+      // this.style.height = this.$.img.naturalHeight + "px";
+      // this.style.width = this.$.img.naturalWidth + 'px';
+      // this.orientation = this.metadata.exif.Orientation || 1;
+      this.$.img.setAttribute('data-orientation', this.metadata.exif.Orientation || 1);
+    },
+
+    _handleImageError: function(ev) {
+      console.error('unexpected image load error', ev);
+    },
+
+    _metadataChanged: function(metadata) {
+      this.$.meta.getThumbnailUrl(metadata, function(thumb) {
+        if (thumb) {
+          this.imageUrl = thumb;
+        }
+        else {
+          this.imageUrl = this._createObjectURL(this.file);
+        }
+      }.bind(this));
+
+    }
   });
 </script>
 

@@ -3,15 +3,22 @@
 'use strict';
 
   /**
+  Add this behavior to enable file drag-n-drop on your element.
+
+  Detect file drop by observing dropFiles property.
 
   @polymerBehavior
   */
   var FileDropBehavior = {
 
     properties: {
+
       /**
-       * dragActive is true when user is dragging the files over
-       * it is reflected to attributes, and you can use  this for css styling
+       * true when files are being dragged over
+       *
+       * Reflects to attribute, use this for css styling
+       *
+       * `:host[drag-active]: color: yellow`
        */
       dragActive: {
         type: Boolean,
@@ -20,7 +27,7 @@
       },
 
       /**
-       * files that have been dropped
+       * files that were dropped
        */
       dropFiles: {
         type: Array,
@@ -60,7 +67,7 @@
     },
 
     _handleDragEnter: function(ev) {
-      console.log('dragEnter');
+      // console.log('dragEnter');
       if (this._getFilesFromDragEvent(ev)) {
         ev.preventDefault();
         ev.stopPropagation();
@@ -77,14 +84,14 @@
     },
 
     _handleDragLeave: function(ev) {
-      console.log('dragLeave');
+      // console.log('dragLeave');
       this.dragActive = false;
       ev.stopPropagation();
       ev.preventDefault();
     },
 
     _handleDrop: function(ev) {
-      console.log('drop');
+      // console.log('drop');
       var files = this._getFilesFromDragEvent(ev);
       var fileArray = [];
       for (var i=0; files && i<files.length; i++) {
