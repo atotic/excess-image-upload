@@ -11,11 +11,13 @@ image upload consists of 3 steps:
 1) file pickers:
    - drag'n'drop mixin
    - file picker button
+
 2) display files and metadata
    - parse metadata on worker thread
    - display image from thumbnail, or scaled original image
-   - throttle thumbnail creation to prevent memory overflow
    - rotate images
+   - optional: throttle thumbnail creation to prevent memory overflow
+
 3) upload file
    - ajax calls over the network
 
@@ -23,8 +25,5 @@ image upload consists of 3 steps:
 image-upload-icon:
   fit is wrong on IE, does not support object-fit tag
 
-# TODO
-- exif-js instead of home-made parser
-- parse latitude/longitude
 
 
