@@ -1,5 +1,9 @@
 # excess-image-upload
-Utility elements for image uploads
+Utility elements for image uploads.
+
+# status
+File pickers, image preview, and exif parsing implemented.
+Upload is left as an exercise for the reader.
 
 # design
 image upload consists of 3 steps:
